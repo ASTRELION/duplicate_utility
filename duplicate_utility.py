@@ -1,28 +1,29 @@
 import os;
 
 print(
-    "Remove File Duplicates Utility"
+	"Remove File Duplicates Utility"
 )
 
 directory = input("ABSOLUTE path to check for duplicate files: ")
 directory = directory.strip()
-identifier = input("File name identifier for duplicate files: ")
-length = int(input("Identifier full length: "))
+identifier = input("File name identifier for duplicate files (ex. '(conflicted copy' ): ")
+length = int(input("Identifier full length (ex. 36): "))
 position = input("Identifier at the (S)tart or (E)nd of the file name?: ")
 
 for subdir, dirs, files in os.walk(directory):
-    for file in files:
-        filePath = subdir + os.sep + file
-        if (identifier in file):
-            fileName, fileType = os.path.splitext(filePath) # get name and file extension of offending file
-            origFilePath = fileName[:len(fileName) - length] + fileType
+	for file in files:
+		filePath = subdir + os.sep + file
+		if (identifier in file):
+			fileName, fileType = os.path.splitext(filePath) # get name and file extension of offending file
+			origFilePath = fileName[:len(fileName) - length] + fileType
 
-            if (position.lower() == 'S'):
-                origFilePath = fileName[length + 1:] + fileType
+			if (position.lower() == 'S'):
+				origFilePath = fileName[length + 1:] + fileType
             
-            print("REMOVING DUPLICATE OF " + filePath + " -> " + origFilePath)
-            if (os.path.getmtime(filePath) > os.path.getmtime(origFilePath)):
-                os.remove(origFilePath)
-                os.rename(filePath, origFilePath)
-            else:
-                os.remove(filePath)
+			if (os.path.isfile(filePath) and os.path.isfile(origFilePath)):
+				print("REMOVING DUPLICATE OF " + filePath + " -> " + origFilePath)
+				if (os.path.getmtime(filePath) > os.path.getmtime(origFilePath)):
+					os.remove(origFilePath)
+					os.rename(filePath, origFilePath)
+				else:
+					os.remove(filePath)
